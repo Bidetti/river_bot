@@ -1,0 +1,51 @@
+const Discord = require("discord.js");
+const config = require("../settings.json");
+const firebase = require('firebase');
+
+module.exports.run = async (bot, message, args) => {
+
+  const reportschannel = bot.channels.get(`name`, "📌╵log-duvida")
+  if(!reportschannel) return message.channel.send("Não foi possível encontrar o canal de dúvidas. Crie um canal com o nome #📌╵log-duvida");
+
+    if(args[0] == "ajuda"){
+      message.reply("Use: !duvida <escreve de uma forma concreta a sua dúvida.>");
+      return;
+    }
+    let rreason = args.join(" ").slice(0);
+    const database = firebase.database();
+    global.idduvida = '';
+    let increaseID = 1;
+    database.ref(`Server/duvidaid/${message.guild.id}`)
+    .once('value').then(async function(snap) {
+      if(snap.val() == null) {
+        database.ref(`Server/duvidaid/${message.guild.id}`)
+        .set({
+          id: 0
+        })
+      }else {
+        idduvida = snap.val().id +increaseID;
+        database.ref(`Server/duvidaid/${message.guild.id}`)
+          .update({
+            id: idduvida
+          })
+      }
+
+    /*let reportEmbed = new Discord.MessageEmbed()
+    .setTitle(`Dúvida`)
+    .setColor("eb0606")
+    .addField("Autor: ", `${message.author}`)
+    .addField("Dúvida: ", rreason)
+    .addField("Discord: ", `<@${message.author.id}>`)
+    .setFooter(`Horário: ${message.createdAt}`);*/
+
+
+    message.delete().catch(O_o=>{});
+    reportschannel.send(`__**Dúvida #${snap.val().id}**__\n \n${rreason}\n \nFeita por: ${message.author}`).then(msg => {
+      msg.react("738447694766276688")
+      msg.react("❌")
+    })
+  })
+}
+module.exports.help = {
+  name: "duvida"
+}
