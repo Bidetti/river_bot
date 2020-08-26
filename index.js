@@ -7,7 +7,7 @@ const firebase = require('firebase');
 bot.commands = new Discord.Collection();
 
 var firebaseConfig = {
-  // Coloque aqui a conexão ao seu firebase realtime database.
+  // Firebase config
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
